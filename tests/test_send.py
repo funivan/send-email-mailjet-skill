@@ -344,7 +344,7 @@ class TestSendEmailWithEchoServer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Start echo server and set MJ_API_URL so send.py posts to it."""
-        cls._server, cls._port = run_server()
+        cls._server, cls._port = run_server(0)
         global API_URL
         API_URL = f"http://127.0.0.1:{cls._port}/"
         os.environ["MJ_API_URL"] = API_URL

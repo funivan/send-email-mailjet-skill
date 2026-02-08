@@ -84,11 +84,12 @@ def clear_captured_request() -> None:
 
 
 def run_server(port: int) -> tuple[HTTPServer, int]:
-    """Start the capture server in a thread. Returns (server, port)."""
+    """Start the capture server in a thread. Returns (server, port). """
     server = HTTPServer(("127.0.0.1", port), CaptureHandler)
+    actual_port = server.server_address[1]
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    return server, port
+    return server, actual_port
 
 if __name__ == "__main__":
     port = 8080
