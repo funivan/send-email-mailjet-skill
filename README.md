@@ -8,6 +8,16 @@ Skill for sending emails with attachments using Mailjet API.
 npx skills add https://github.com/funivan/send-email-mailjet-skill/ --skill send-email-mailjet
 ```
 
+
+### Manual installation
+You can copy this to the skills folder of your favorite AI agent:
+
+```shell
+git clone https://github.com/funivan/send-email-mailjet-skill/ --depth 1
+cd send-email-mailjet-skill
+cp -r skill/send-email-mailjet ~/.gemini/skills/
+
+```
 ## Configuration
 
 Mailjet is a reliable email delivery service with a REST API. 
@@ -25,7 +35,7 @@ MJ_APIKEY_PRIVATE=your_private_key
 Now you can call the skill with parameters like sender, recipient, subject, body, and attachments.
 
 > [!TIP]
-> Send email to test@example.com from user@example.com with joke and funny subject.
+> Send email to test@example.com from user@example.com with a joke and funny subject.
 
 You can also set default env variables for sender, recipient, subject and others:
 
