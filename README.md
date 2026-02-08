@@ -2,6 +2,12 @@
 
 Skill for sending emails with attachments using Mailjet API.
 
+
+## Installation
+```
+npx skills add https://github.com/funivan/send-email-mailjet-skill/ --skill send-email-mailjet
+```
+
 ## Configuration
 Go to [Mailjet](https://app.mailjet.com/dashboard) and obtain your API keys. Create a `.env` file in the project root with the following variables:
 
