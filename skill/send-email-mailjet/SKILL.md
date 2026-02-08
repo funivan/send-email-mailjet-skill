@@ -171,7 +171,6 @@ python3 scripts/send.py \
 2. **Professional Body Text:** Include context and call-to-action in the email body
 3. **File Size Limits:** Keep total attachment size under 15MB (Mailjet's typical limit)
 4. **File Naming:** Use clear, descriptive filenames for attachments
-4. **Body format:** Use formatted html body for better readability if not specified otherwise.
 
 ### Security & Privacy
 
