@@ -11,6 +11,8 @@ import urllib.error
 from typing import List, Optional
 
 
+MAILJET_API_URL = 'https://api.mailjet.com/v3.1/send'
+
 # Register additional MIME types not in the standard library
 mimetypes.add_type('text/markdown', '.md')
 mimetypes.add_type('application/epub', '.epub')
@@ -122,8 +124,7 @@ def send_email(
 
 
     # Make HTTP request
-    # Allow overriding the Mailjet API URL via MJ_API_URL env var (keeps default for compatibility)
-    url = os.environ.get('MJ_API_URL', 'https://api.mailjet.com/v3.1/send')
+    url = MAILJET_API_URL
     json_data = json.dumps(json_payload, ensure_ascii=False).encode('utf-8')
 
     # Create basic auth header
@@ -157,7 +158,6 @@ def parse_args() -> argparse.Namespace:
 Environment variables (can be set in .env file):
   MJ_APIKEY_PUBLIC   Mailjet public API key (required)
   MJ_APIKEY_PRIVATE  Mailjet private API key (required)
-  MJ_API_URL         Mailjet API URL (optional, default: https://api.mailjet.com/v3.1/send)
   MAIL_FROM          Default sender email
   MAIL_TO            Default recipient email
   MAIL_SUBJECT       Default email subject (default: Hello)
