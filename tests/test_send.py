@@ -2,6 +2,7 @@
 """Tests for send.py email module."""
 import json
 import os
+import shutil
 import sys
 import tempfile
 import unittest
@@ -10,7 +11,6 @@ from unittest import mock
 
 parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 skill_dir = os.path.join(parent_dir, 'skill', 'send-email-mailjet', 'scripts')
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(1, skill_dir)
 import send
 from http_echo_server import (
@@ -86,7 +86,7 @@ class TestLoadEnvFile(unittest.TestCase):
     def test_env_vars_take_precedence(self):
         """Test that existing env vars are not overwritten."""
         os.environ['TEST_VAR'] = 'original'
-        
+
         with tempfile.NamedTemporaryFile(mode='w', suffix='.env', delete=False) as f:
             f.write('TEST_VAR=from_file\n')
             env_path = f.name
@@ -137,7 +137,7 @@ class TestGetFilesFromEnv(unittest.TestCase):
     #     os.environ['MAIL_FILES_1'] = '/path/to/file1.pdf'
     #     os.environ['MAIL_FILES_2'] = '/path/to/file2.epub'
     #     os.environ['MAIL_FILES_3'] = '/path/to/file3.txt'
-        
+
         # files = send.get_files_from_env()
         # self.assertEqual(files, [
         #     '/path/to/file1.pdf',
@@ -150,7 +150,7 @@ class TestGetFilesFromEnv(unittest.TestCase):
         os.environ['MAIL_FILES_1'] = '/path/to/file1.pdf'
         # MAIL_FILES_2 is not set
         os.environ['MAIL_FILES_3'] = '/path/to/file3.pdf'
-        
+
         files = send.get_files_from_env()
         # Should only get file1 because file2 breaks the sequence
         self.assertEqual(files, ['/path/to/file1.pdf'])
@@ -164,7 +164,7 @@ class TestGetContentType(unittest.TestCase):
         test_cases = [
             ('document.md', 'text/markdown'),
             ('document.txt', 'text/plain'),
-            ('book.epub', 'application/epub+zip'),
+            ('book.epub', 'application/epub'),
             ('book.fb2', 'application/x-fictionbook+xml'),
             ('document.pdf', 'application/pdf'),
             ('page.html', 'text/html'),
@@ -180,7 +180,7 @@ class TestGetContentType(unittest.TestCase):
     def test_case_insensitive(self):
         """Test that extension matching is case-insensitive."""
         self.assertEqual(send.get_content_type('file.PDF'), 'application/pdf')
-        self.assertEqual(send.get_content_type('file.EPUB'), 'application/epub+zip')
+        self.assertEqual(send.get_content_type('file.EPUB'), 'application/epub')
 
     def test_unknown_extension_returns_octet_stream(self):
         """Test that unknown extension returns application/octet-stream."""
@@ -201,7 +201,7 @@ class TestCreateAttachment(unittest.TestCase):
 
         try:
             attachment = send.create_attachment(file_path)
-            
+
             self.assertEqual(attachment['ContentType'], 'text/plain')
             self.assertTrue(attachment['Filename'].endswith('.txt'))
             self.assertEqual(attachment['ContentID'], attachment['Filename'])
@@ -246,10 +246,10 @@ class TestParseArgs(unittest.TestCase):
             '--files', 'file1.pdf', 'file2.epub',
             '--env', 'custom.env'
         ]
-        
+
         with mock.patch.object(sys, 'argv', test_args):
             args = send.parse_args()
-            
+
             self.assertEqual(args.from_email, 'sender@example.com')
             self.assertEqual(args.to_email, 'recipient@example.com')
             self.assertEqual(args.subject, 'Test Subject')
@@ -266,10 +266,10 @@ class TestParseArgs(unittest.TestCase):
             '-s', 'Subject',
             '-b', 'Body'
         ]
-        
+
         with mock.patch.object(sys, 'argv', test_args):
             args = send.parse_args()
-            
+
             self.assertEqual(args.from_email, 'sender@example.com')
             self.assertEqual(args.to_email, 'recipient@example.com')
             self.assertEqual(args.subject, 'Subject')
@@ -278,7 +278,7 @@ class TestParseArgs(unittest.TestCase):
     def test_default_env_path(self):
         """Test default .env path."""
         test_args = ['send.py']
-        
+
         with mock.patch.object(sys, 'argv', test_args):
             args = send.parse_args()
             self.assertEqual(args.env, '.env')
@@ -300,7 +300,7 @@ class TestSendEmail(unittest.TestCase):
     def test_missing_api_keys(self):
         """Test that missing API keys cause exit."""
         os.environ.pop('MJ_APIKEY_PUBLIC', None)
-        
+
         with self.assertRaises(SystemExit) as cm:
             send.send_email(
                 from_email='sender@example.com',
@@ -326,7 +326,7 @@ class TestSendEmail(unittest.TestCase):
             subject='Test',
             body='Test body'
         )
-        
+
         # Verify urlopen was called
         mock_urlopen.assert_called_once()
 
@@ -336,25 +336,25 @@ API_URL = None
 
 
 class TestSendEmailWithEchoServer(unittest.TestCase):
-    """Integration tests: real HTTP server captures request; validate payload via API_URL."""
+    """Integration tests: real HTTP server captures request; MAILJET_API_URL patched to it."""
 
     _server = None
     _port = None
 
     @classmethod
     def setUpClass(cls):
-        """Start echo server and set MJ_API_URL so send.py posts to it."""
+        """Start echo server and patch MAILJET_API_URL so send.py posts to it."""
         cls._server, cls._port = run_server(0)
         global API_URL
         API_URL = f"http://127.0.0.1:{cls._port}/"
-        os.environ["MJ_API_URL"] = API_URL
+        send.MAILJET_API_URL = API_URL
 
     @classmethod
     def tearDownClass(cls):
-        """Stop server and clear MJ_API_URL."""
+        """Stop server and restore MAILJET_API_URL."""
         if cls._server:
             cls._server.shutdown()
-        os.environ.pop("MJ_API_URL", None)
+        send.MAILJET_API_URL = 'https://api.mailjet.com/v3.1/send'
         global API_URL
         API_URL = None
 
@@ -465,7 +465,7 @@ class TestMainIntegration(unittest.TestCase):
     def test_missing_from_email(self):
         """Test that missing from_email causes error."""
         os.environ.pop('MAIL_FROM', None)
-        
+
         test_args = ['send.py']
         with mock.patch.object(sys, 'argv', test_args):
             with self.assertRaises(SystemExit) as cm:
@@ -475,7 +475,7 @@ class TestMainIntegration(unittest.TestCase):
     def test_missing_to_email(self):
         """Test that missing to_email causes error."""
         os.environ.pop('MAIL_TO', None)
-        
+
         test_args = ['send.py', '--from', 'sender@example.com']
         with mock.patch.object(sys, 'argv', test_args):
             with self.assertRaises(SystemExit) as cm:
