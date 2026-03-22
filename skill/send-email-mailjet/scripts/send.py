@@ -13,7 +13,7 @@ from typing import List, Optional
 
 # Register additional MIME types not in the standard library
 mimetypes.add_type('text/markdown', '.md')
-mimetypes.add_type('application/epub+zip', '.epub')
+mimetypes.add_type('application/epub', '.epub')
 mimetypes.add_type('application/x-fictionbook+xml', '.fb2')
 
 
