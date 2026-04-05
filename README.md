@@ -4,20 +4,30 @@ Skill for sending emails with attachments using Mailjet API.
 
 
 ## Installation
+
+### Gemini
 ```
 npx skills add https://github.com/funivan/send-email-mailjet-skill/ --skill send-email-mailjet
 ```
 
-
-### Manual installation
-You can copy this to the skills folder of your favorite AI agent:
+Manual installation:
 
 ```shell
 git clone https://github.com/funivan/send-email-mailjet-skill/ --depth 1
 cd send-email-mailjet-skill
 cp -r skill/send-email-mailjet ~/.gemini/skills/
-
 ```
+
+### Claude Code
+
+Clone the repository and use it as a project with Claude Code:
+
+```shell
+git clone https://github.com/funivan/send-email-mailjet-skill/ --depth 1
+cd send-email-mailjet-skill
+```
+
+The repository includes `CLAUDE.md`, a `/send-email` slash command, and pre-configured permissions. Use the `/send-email` command or ask Claude to send an email directly.
 ## Configuration
 
 Mailjet is a reliable email delivery service with a REST API. 
