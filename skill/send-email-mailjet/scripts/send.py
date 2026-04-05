@@ -43,11 +43,11 @@ def load_env_file(env_path: str = '.env') -> None:
 
 
 def get_files_from_env() -> List[str]:
-    """Get file paths from MAIL_FILES_1, MAIL_FILES_2, etc. environment variables."""
+    """Get file paths from MJ_FILES_1, MJ_FILES_2, etc. environment variables."""
     files = []
     i = 1
     while True:
-        key = f'MAIL_FILES_{i}'
+        key = f'MJ_FILES_{i}'
         value = os.environ.get(key)
         if value is None:
             break
@@ -158,12 +158,12 @@ def parse_args() -> argparse.Namespace:
 Environment variables (can be set in .env file):
   MJ_APIKEY_PUBLIC   Mailjet public API key (required)
   MJ_APIKEY_PRIVATE  Mailjet private API key (required)
-  MAIL_FROM          Default sender email
-  MAIL_TO            Default recipient email
-  MAIL_SUBJECT       Default email subject (default: Hello)
-  MAIL_BODY          Default email body (default: Hello from AI)
-  MAIL_FILES_1       First file attachment
-  MAIL_FILES_2       Second file attachment (and so on...)
+  MJ_FROM          Default sender email
+  MJ_TO            Default recipient email
+  MJ_SUBJECT       Default email subject (default: Hello)
+  MJ_BODY          Default email body (default: Hello from AI)
+  MJ_FILES_1       First file attachment
+  MJ_FILES_2       Second file attachment (and so on...)
 
 Examples:
   %(prog)s --from sender@example.com --to recipient@example.com --subject "Hello" --body "Message"
@@ -218,10 +218,10 @@ def main() -> None:
     load_env_file(args.env)
 
     # Get values from args or environment variables
-    from_email: str = args.from_email or os.environ.get('MAIL_FROM', '')
-    to_email: str = args.to_email or os.environ.get('MAIL_TO', '')
-    subject: str = args.subject or os.environ.get('MAIL_SUBJECT', 'Hello')
-    body: str = args.body or os.environ.get('MAIL_BODY', 'Hello from AI')
+    from_email: str = args.from_email or os.environ.get('MJ_FROM', '')
+    to_email: str = args.to_email or os.environ.get('MJ_TO', '')
+    subject: str = args.subject or os.environ.get('MJ_SUBJECT', 'Hello')
+    body: str = args.body or os.environ.get('MJ_BODY', 'Hello from AI')
 
     # Get files from args or environment variables
     files: List[str] = []
@@ -232,10 +232,10 @@ def main() -> None:
 
     # Validate required fields
     if not from_email:
-        print("Error: --from is required (or set MAIL_FROM in environment)", file=sys.stderr)
+        print("Error: --from is required (or set MJ_FROM in environment)", file=sys.stderr)
         sys.exit(1)
     if not to_email:
-        print("Error: --to is required (or set MAIL_TO in environment)", file=sys.stderr)
+        print("Error: --to is required (or set MJ_TO in environment)", file=sys.stderr)
         sys.exit(1)
 
     # Send the email

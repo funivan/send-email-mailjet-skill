@@ -50,9 +50,9 @@ Now you can call the skill with parameters like sender, recipient, subject, body
 You can also set default env variables for sender, recipient, subject and others:
 
 ```bash
-MAIL_FROM=sender@example.com
-MAIL_TO=recipient@example.com
-MAIL_SUBJECT=Hello from AI
+MJ_FROM=sender@example.com
+MJ_TO=recipient@example.com
+MJ_SUBJECT=Hello from AI
 ```
 And specify just body in prompt:
 > [!TIP]
@@ -61,15 +61,15 @@ And specify just body in prompt:
 
 ### Attaching files defined in env
 
-You can pre-configure file attachments using sequential `MAIL_FILES_N` variables:
+You can pre-configure file attachments using sequential `MJ_FILES_N` variables:
 
 ```bash
-MAIL_FILES_1=/path/to/file1.pdf
-MAIL_FILES_2=/path/to/file2.epub
-MAIL_FILES_3=/path/to/file3.txt
+MJ_FILES_1=/path/to/file1.pdf
+MJ_FILES_2=/path/to/file2.epub
+MJ_FILES_3=/path/to/file3.txt
 ```
 
-**Important:** Gaps in numbering stop the sequence. If `MAIL_FILES_2` is missing, only `MAIL_FILES_1` will be used.
+**Important:** Gaps in numbering stop the sequence. If `MJ_FILES_2` is missing, only `MJ_FILES_1` will be used.
 
 Files will be attached in the order of their numbering in all email sends, unless overridden by command-line arguments.
 

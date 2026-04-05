@@ -32,13 +32,13 @@ MJ_APIKEY_PRIVATE=your_private_key
 
 2. Optionally configure default values:
 ```bash
-MAIL_FROM=sender@example.com
-MAIL_TO=default-recipient@example.com
-MAIL_SUBJECT=Default Subject
-MAIL_BODY=Default message body
-# Attachments: MAIL_FILES_1, MAIL_FILES_2, ...
-MAIL_FILES_1=path/to/attachment1.pdf
-MAIL_FILES_2=path/to/attachment2.png
+MJ_FROM=sender@example.com
+MJ_TO=default-recipient@example.com
+MJ_SUBJECT=Default Subject
+MJ_BODY=Default message body
+# Attachments: MJ_FILES_1, MJ_FILES_2, ...
+MJ_FILES_1=path/to/attachment1.pdf
+MJ_FILES_2=path/to/attachment2.png
 ```
 
 ### Usage with all parameters
