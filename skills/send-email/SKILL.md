@@ -5,17 +5,19 @@ description: Send emails with attachments when users say "send email", "email th
 
 # Send Email via Mailjet
 
-Send an email using the Mailjet API. Extract the following from the user's request:
+Send an email using the Mailjet API. All parameters are optional — they can be set via environment variables or a `.env` file in the project root. Extract any of the following from the user's request if provided:
 
-- **to**: recipient email address
-- **from**: sender email address (optional if configured)
-- **subject**: email subject line
-- **body**: email body text
-- **files**: file paths to attach (optional, space-separated)
+- **to**: recipient email address (env: `MAIL_TO`)
+- **from**: sender email address (env: `MAIL_FROM`)
+- **subject**: email subject line (env: `MAIL_SUBJECT`)
+- **body**: email body text (env: `MAIL_BODY`)
+- **files**: file paths to attach (env: `MAIL_FILES_1`, `MAIL_FILES_2`, ...)
+
+Only include flags for values explicitly provided by the user. Omit flags that were not mentioned — the script will use environment defaults.
 
 ## Sending the email
 
-Run the following command, omitting any flags that were not provided:
+Run the following command with only the flags the user specified:
 
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/skill/send-email-mailjet/scripts/send.py \
