@@ -42,32 +42,13 @@ def load_env_file(env_path: str = '.env') -> None:
                     os.environ[key] = value
 
 
-def get_env_with_fallback(key: str, default: str = '') -> str:
-    """Get env var with MJ_ prefix, falling back to deprecated MAIL_ prefix."""
-    value = os.environ.get(key)
-    if value is not None:
-        return value
-    # Support deprecated MAIL_* prefix as fallback
-    deprecated_key = key.replace('MJ_', 'MAIL_', 1)
-    value = os.environ.get(deprecated_key)
-    if value is not None:
-        print(f"Warning: {deprecated_key} is deprecated, use {key} instead", file=sys.stderr)
-        return value
-    return default
-
-
 def get_files_from_env() -> List[str]:
     """Get file paths from MJ_FILES_1, MJ_FILES_2, etc. environment variables."""
     files = []
     i = 1
     while True:
-        mj_key = f'MJ_FILES_{i}'
-        mail_key = f'MAIL_FILES_{i}'
-        value = os.environ.get(mj_key)
-        if value is None:
-            value = os.environ.get(mail_key)
-            if value is not None:
-                print(f"Warning: {mail_key} is deprecated, use {mj_key} instead", file=sys.stderr)
+        key = f'MJ_FILES_{i}'
+        value = os.environ.get(key)
         if value is None:
             break
         files.append(value)
@@ -236,11 +217,11 @@ def main() -> None:
     # Load environment variables from .env file
     load_env_file(args.env)
 
-    # Get values from args or environment variables (with MAIL_* fallback)
-    from_email: str = args.from_email or get_env_with_fallback('MJ_FROM')
-    to_email: str = args.to_email or get_env_with_fallback('MJ_TO')
-    subject: str = args.subject or get_env_with_fallback('MJ_SUBJECT', 'Hello')
-    body: str = args.body or get_env_with_fallback('MJ_BODY', 'Hello from AI')
+    # Get values from args or environment variables
+    from_email: str = args.from_email or os.environ.get('MJ_FROM', '')
+    to_email: str = args.to_email or os.environ.get('MJ_TO', '')
+    subject: str = args.subject or os.environ.get('MJ_SUBJECT', 'Hello')
+    body: str = args.body or os.environ.get('MJ_BODY', 'Hello from AI')
 
     # Get files from args or environment variables
     files: List[str] = []

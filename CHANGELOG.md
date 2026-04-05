@@ -13,7 +13,6 @@
   - `MAIL_SUBJECT` → `MJ_SUBJECT`
   - `MAIL_BODY` → `MJ_BODY`
   - `MAIL_FILES_N` → `MJ_FILES_N`
-- The old `MAIL_*` names still work as a deprecated fallback with a warning printed to stderr.
 
 ### Migration
-If you have an existing `.env` file, rename your variables from `MAIL_*` to `MJ_*`. The old names will continue to work but will emit deprecation warnings.
+If you have an existing `.env` file, rename your variables from `MAIL_*` to `MJ_*`.
