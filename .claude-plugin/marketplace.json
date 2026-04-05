@@ -1,0 +1,24 @@
+{
+  "name": "send-email-mailjet-marketplace",
+  "owner": {
+    "name": "Ivan Shcherbak"
+  },
+  "metadata": {
+    "description": "Mailjet email sending plugin for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "send-email-mailjet",
+      "source": "./",
+      "description": "Send emails with attachments via Mailjet API",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ivan Shcherbak"
+      },
+      "homepage": "https://github.com/funivan/send-email-mailjet-skill",
+      "repository": "https://github.com/funivan/send-email-mailjet-skill",
+      "license": "MIT",
+      "keywords": ["email", "mailjet", "attachments"]
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "name": "send-email-mailjet",
+  "version": "1.0.0",
+  "description": "Send emails with attachments via Mailjet API",
+  "author": {
+    "name": "Ivan Shcherbak"
+  },
+  "repository": "https://github.com/funivan/send-email-mailjet-skill",
+  "license": "MIT",
+  "keywords": ["email", "mailjet", "attachments"],
+  "userConfig": {
+    "mj_apikey_public": {
+      "description": "Mailjet public API key",
+      "sensitive": false
+    },
+    "mj_apikey_private": {
+      "description": "Mailjet private API key",
+      "sensitive": true
+    },
+    "mail_from": {
+      "description": "Default sender email address",
+      "sensitive": false
+    },
+    "mail_to": {
+      "description": "Default recipient email address",
+      "sensitive": false
+    }
+  }
+}

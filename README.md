@@ -20,14 +20,14 @@ cp -r skill/send-email-mailjet ~/.gemini/skills/
 
 ### Claude Code
 
-Clone the repository and use it as a project with Claude Code:
+Add the marketplace and install the plugin:
 
-```shell
-git clone https://github.com/funivan/send-email-mailjet-skill/ --depth 1
-cd send-email-mailjet-skill
+```
+/plugin marketplace add funivan/send-email-mailjet-skill
+/plugin install send-email-mailjet@send-email-mailjet-marketplace
 ```
 
-The repository includes `CLAUDE.md`, a `/send-email` slash command, and pre-configured permissions. Use the `/send-email` command or ask Claude to send an email directly.
+After installation, Claude will automatically detect when you want to send an email and use the skill. You can also invoke it directly with `/send-email-mailjet:send-email`.
 ## Configuration
 
 Mailjet is a reliable email delivery service with a REST API. 
