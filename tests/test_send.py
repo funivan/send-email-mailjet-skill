@@ -465,6 +465,7 @@ class TestMainIntegration(unittest.TestCase):
     def test_missing_from_email(self):
         """Test that missing from_email causes error."""
         os.environ.pop('MJ_FROM', None)
+        os.environ.pop('MAIL_FROM', None)  # clear deprecated fallback
 
         test_args = ['send.py']
         with mock.patch.object(sys, 'argv', test_args):
@@ -475,6 +476,7 @@ class TestMainIntegration(unittest.TestCase):
     def test_missing_to_email(self):
         """Test that missing to_email causes error."""
         os.environ.pop('MJ_TO', None)
+        os.environ.pop('MAIL_TO', None)  # clear deprecated fallback
 
         test_args = ['send.py', '--from', 'sender@example.com']
         with mock.patch.object(sys, 'argv', test_args):

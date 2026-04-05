@@ -10,7 +10,7 @@ Skill for sending emails with attachments using Mailjet API.
 npx skills add https://github.com/funivan/send-email-mailjet-skill/ --skill send-email-mailjet
 ```
 
-Manual installation:
+### Manual installation
 
 ```shell
 git clone https://github.com/funivan/send-email-mailjet-skill/ --depth 1
