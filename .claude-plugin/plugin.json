@@ -1,0 +1,11 @@
+{
+  "name": "send-email-mailjet",
+  "version": "1.0.0",
+  "description": "Send emails with attachments via Mailjet API",
+  "author": {
+    "name": "Ivan Shcherbak"
+  },
+  "repository": "https://github.com/funivan/send-email-mailjet-skill",
+  "license": "MIT",
+  "keywords": ["email", "mailjet", "attachments"]
+}

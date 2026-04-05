@@ -26,7 +26,7 @@ class TestLoadEnvFile(unittest.TestCase):
         """Clear relevant environment variables before each test."""
         self.env_vars_to_clear = [
             'TEST_VAR', 'TEST_VAR2', 'QUOTED_VAR', 'SINGLE_QUOTED',
-            'MAIL_FROM', 'MAIL_TO', 'MAIL_FILES_1'
+            'MJ_FROM', 'MJ_TO', 'MJ_FILES_1'
         ]
         self.original_env = {}
         for var in self.env_vars_to_clear:
@@ -107,10 +107,10 @@ class TestGetFilesFromEnv(unittest.TestCase):
     """Tests for get_files_from_env function."""
 
     def setUp(self):
-        """Clear MAIL_FILES_* environment variables."""
+        """Clear MJ_FILES_* environment variables."""
         self.original_env = {}
         for i in range(1, 10):
-            key = f'MAIL_FILES_{i}'
+            key = f'MJ_FILES_{i}'
             self.original_env[key] = os.environ.pop(key, None)
 
     def tearDown(self):
@@ -122,21 +122,21 @@ class TestGetFilesFromEnv(unittest.TestCase):
                 os.environ.pop(key, None)
 
     def test_no_files(self):
-        """Test when no MAIL_FILES_* are set."""
+        """Test when no MJ_FILES_* are set."""
         files = send.get_files_from_env()
         self.assertEqual(files, [])
 
     # def test_single_file(self):
-    #     """Test with single MAIL_FILES_1."""
-    #     os.environ['MAIL_FILES_1'] = '/path/to/file.pdf'
+    #     """Test with single MJ_FILES_1."""
+    #     os.environ['MJ_FILES_1'] = '/path/to/file.pdf'
     #     files = send.get_files_from_env()
     #     self.assertEqual(files, ['/path/to/file.pdf'])
 
     # def test_multiple_files(self):
-    #     """Test with multiple MAIL_FILES_* variables."""
-    #     os.environ['MAIL_FILES_1'] = '/path/to/file1.pdf'
-    #     os.environ['MAIL_FILES_2'] = '/path/to/file2.epub'
-    #     os.environ['MAIL_FILES_3'] = '/path/to/file3.txt'
+    #     """Test with multiple MJ_FILES_* variables."""
+    #     os.environ['MJ_FILES_1'] = '/path/to/file1.pdf'
+    #     os.environ['MJ_FILES_2'] = '/path/to/file2.epub'
+    #     os.environ['MJ_FILES_3'] = '/path/to/file3.txt'
 
         # files = send.get_files_from_env()
         # self.assertEqual(files, [
@@ -147,9 +147,9 @@ class TestGetFilesFromEnv(unittest.TestCase):
 
     def test_gap_in_numbering(self):
         """Test that gaps in numbering stop the sequence."""
-        os.environ['MAIL_FILES_1'] = '/path/to/file1.pdf'
-        # MAIL_FILES_2 is not set
-        os.environ['MAIL_FILES_3'] = '/path/to/file3.pdf'
+        os.environ['MJ_FILES_1'] = '/path/to/file1.pdf'
+        # MJ_FILES_2 is not set
+        os.environ['MJ_FILES_3'] = '/path/to/file3.pdf'
 
         files = send.get_files_from_env()
         # Should only get file1 because file2 breaks the sequence
@@ -446,8 +446,8 @@ class TestMainIntegration(unittest.TestCase):
         self.env_vars = {
             'MJ_APIKEY_PUBLIC': 'test_public',
             'MJ_APIKEY_PRIVATE': 'test_private',
-            'MAIL_FROM': 'default@example.com',
-            'MAIL_TO': 'recipient@example.com',
+            'MJ_FROM': 'default@example.com',
+            'MJ_TO': 'recipient@example.com',
         }
         self.original_env = {}
         for key, value in self.env_vars.items():
@@ -464,7 +464,7 @@ class TestMainIntegration(unittest.TestCase):
 
     def test_missing_from_email(self):
         """Test that missing from_email causes error."""
-        os.environ.pop('MAIL_FROM', None)
+        os.environ.pop('MJ_FROM', None)
 
         test_args = ['send.py']
         with mock.patch.object(sys, 'argv', test_args):
@@ -474,7 +474,7 @@ class TestMainIntegration(unittest.TestCase):
 
     def test_missing_to_email(self):
         """Test that missing to_email causes error."""
-        os.environ.pop('MAIL_TO', None)
+        os.environ.pop('MJ_TO', None)
 
         test_args = ['send.py', '--from', 'sender@example.com']
         with mock.patch.object(sys, 'argv', test_args):
