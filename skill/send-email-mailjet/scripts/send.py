@@ -90,7 +90,7 @@ def create_attachment(file_path: str) -> dict:
 
 def send_email(
     from_email: str,
-    to_email: str,
+    to_emails: List[str],
     subject: str,
     body: str,
     files: Optional[List[str]] = None
@@ -104,49 +104,51 @@ def send_email(
         print("Error: MJ_APIKEY_PUBLIC and MJ_APIKEY_PRIVATE environment variables must be set")
         sys.exit(1)
 
-    # Build message payload
-    message: dict = {
-        "From": {"Email": from_email},
-        "To": [{"Email": to_email}],
-        "Subject": subject,
-        "TextPart": body,
-    }
+    # Send separate emails to each recipient
+    for to_email in to_emails:
+        # Build message payload
+        message: dict = {
+            "From": {"Email": from_email},
+            "To": [{"Email": to_email}],
+            "Subject": subject,
+            "TextPart": body,
+        }
 
-    # Add attachments if provided
-    if files:
-        attachments = []
-        for file_path in files:
-            attachment = create_attachment(file_path)
-            attachments.append(attachment)
-        message["InlinedAttachments"] = attachments
+        # Add attachments if provided
+        if files:
+            attachments = []
+            for file_path in files:
+                attachment = create_attachment(file_path)
+                attachments.append(attachment)
+            message["InlinedAttachments"] = attachments
 
-    json_payload = {"Messages": [message]}
+        json_payload = {"Messages": [message]}
 
 
-    # Make HTTP request
-    url = MAILJET_API_URL
-    json_data = json.dumps(json_payload, ensure_ascii=False).encode('utf-8')
+        # Make HTTP request
+        url = MAILJET_API_URL
+        json_data = json.dumps(json_payload, ensure_ascii=False).encode('utf-8')
 
-    # Create basic auth header
-    credentials = f"{mj_apikey_public}:{mj_apikey_private}"
-    auth_string = base64.b64encode(credentials.encode('utf-8')).decode('ascii')
+        # Create basic auth header
+        credentials = f"{mj_apikey_public}:{mj_apikey_private}"
+        auth_string = base64.b64encode(credentials.encode('utf-8')).decode('ascii')
 
-    request = urllib.request.Request(url, data=json_data)
-    request.add_header('Content-Type', 'application/json')
-    request.add_header('Authorization', f'Basic {auth_string}')
+        request = urllib.request.Request(url, data=json_data)
+        request.add_header('Content-Type', 'application/json')
+        request.add_header('Authorization', f'Basic {auth_string}')
 
-    try:
-        with urllib.request.urlopen(request) as response:
-            response_data = response.read().decode('utf-8')
-            print(response_data)
-    except urllib.error.HTTPError as e:
-        print(f"HTTP Error {e.code}: {e.reason}", file=sys.stderr)
-        error_body = e.read().decode('utf-8')
-        print(error_body, file=sys.stderr)
-        sys.exit(1)
-    except urllib.error.URLError as e:
-        print(f"URL Error: {e.reason}", file=sys.stderr)
-        sys.exit(1)
+        try:
+            with urllib.request.urlopen(request) as response:
+                response_data = response.read().decode('utf-8')
+                print(f"Email sent to {to_email}: {response_data}")
+        except urllib.error.HTTPError as e:
+            print(f"HTTP Error {e.code} for {to_email}: {e.reason}", file=sys.stderr)
+            error_body = e.read().decode('utf-8')
+            print(error_body, file=sys.stderr)
+            sys.exit(1)
+        except urllib.error.URLError as e:
+            print(f"URL Error for {to_email}: {e.reason}", file=sys.stderr)
+            sys.exit(1)
 
 
 def parse_args() -> argparse.Namespace:
@@ -159,7 +161,7 @@ Environment variables (can be set in .env file):
   MJ_APIKEY_PUBLIC   Mailjet public API key (required)
   MJ_APIKEY_PRIVATE  Mailjet private API key (required)
   MJ_FROM          Default sender email
-  MJ_TO            Default recipient email
+  MJ_TO            Default recipient email (comma-separated for multiple recipients)
   MJ_SUBJECT       Default email subject (default: Hello)
   MJ_BODY          Default email body (default: Hello from AI)
   MJ_FILES_1       First file attachment
@@ -182,7 +184,7 @@ Examples:
         '--to', '-t',
         dest='to_email',
         type=str,
-        help='Recipient email address'
+        help='Recipient email address (comma-separated for multiple recipients)'
     )
     parser.add_argument(
         '--subject', '-s',
@@ -219,9 +221,14 @@ def main() -> None:
 
     # Get values from args or environment variables
     from_email: str = args.from_email or os.environ.get('MJ_FROM', '')
-    to_email: str = args.to_email or os.environ.get('MJ_TO', '')
+    to_email_str: str = args.to_email or os.environ.get('MJ_TO', '')
     subject: str = args.subject or os.environ.get('MJ_SUBJECT', 'Hello')
     body: str = args.body or os.environ.get('MJ_BODY', 'Hello from AI')
+
+    # Parse comma-separated email addresses
+    to_emails: List[str] = []
+    if to_email_str:
+        to_emails = [email.strip() for email in to_email_str.split(',') if email.strip()]
 
     # Get files from args or environment variables
     files: List[str] = []
@@ -234,12 +241,12 @@ def main() -> None:
     if not from_email:
         print("Error: --from is required (or set MJ_FROM in environment)", file=sys.stderr)
         sys.exit(1)
-    if not to_email:
+    if not to_emails:
         print("Error: --to is required (or set MJ_TO in environment)", file=sys.stderr)
         sys.exit(1)
 
     # Send the email
-    send_email(from_email, to_email, subject, body, files if files else None)
+    send_email(from_email, to_emails, subject, body, files if files else None)
 
 
 if __name__ == '__main__':
