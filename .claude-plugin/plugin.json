@@ -1,6 +1,6 @@
 {
   "name": "send-email-mailjet",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Send emails with attachments via Mailjet API",
   "author": {
     "name": "Ivan Shcherbak"

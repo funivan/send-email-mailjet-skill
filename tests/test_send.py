@@ -348,6 +348,24 @@ class TestSendEmail(unittest.TestCase):
 
         self.assertEqual(mock_urlopen.call_count, 2)
 
+    @mock.patch('urllib.request.urlopen')
+    def test_sends_email_for_comma_separated_string(self, mock_urlopen):
+        """Test that comma-separated string recipients are sent one-by-one."""
+        mock_response = mock.MagicMock()
+        mock_response.read.return_value = b'{"Messages": [{"Status": "success"}]}'
+        mock_response.__enter__ = mock.MagicMock(return_value=mock_response)
+        mock_response.__exit__ = mock.MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        send.send_email(
+            from_email='sender@example.com',
+            to_emails='first@example.com, second@example.com',
+            subject='Test',
+            body='Test body'
+        )
+
+        self.assertEqual(mock_urlopen.call_count, 2)
+
 
 # Base URL for the echo server (set in TestSendEmailWithEchoServer.setUpClass)
 API_URL = None
