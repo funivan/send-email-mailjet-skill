@@ -8,7 +8,7 @@ import mimetypes
 import urllib.request
 import urllib.parse
 import urllib.error
-from typing import List, Optional
+from typing import List, Optional, Sequence
 
 
 MAILJET_API_URL = 'https://api.mailjet.com/v3.1/send'
@@ -90,7 +90,7 @@ def create_attachment(file_path: str) -> dict:
 
 def send_email(
     from_email: str,
-    to_emails: List[str],
+    to_emails: Sequence[str] | str,
     subject: str,
     body: str,
     files: Optional[List[str]] = None
@@ -104,8 +104,14 @@ def send_email(
         print("Error: MJ_APIKEY_PUBLIC and MJ_APIKEY_PRIVATE environment variables must be set")
         sys.exit(1)
 
+    # Normalize recipients and send separate emails to each one.
+    if isinstance(to_emails, str):
+        recipients = [email.strip() for email in to_emails.split(',') if email.strip()]
+    else:
+        recipients = [email.strip() for email in to_emails if email and email.strip()]
+
     # Send separate emails to each recipient
-    for to_email in to_emails:
+    for to_email in recipients:
         # Build message payload
         message: dict = {
             "From": {"Email": from_email},

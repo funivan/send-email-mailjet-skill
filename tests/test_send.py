@@ -304,7 +304,7 @@ class TestSendEmail(unittest.TestCase):
         with self.assertRaises(SystemExit) as cm:
             send.send_email(
                 from_email='sender@example.com',
-                to_email='recipient@example.com',
+                to_emails=['recipient@example.com'],
                 subject='Test',
                 body='Test body'
             )
@@ -322,13 +322,49 @@ class TestSendEmail(unittest.TestCase):
         # Should not raise
         send.send_email(
             from_email='sender@example.com',
-            to_email='recipient@example.com',
+            to_emails=['recipient@example.com'],
             subject='Test',
             body='Test body'
         )
 
         # Verify urlopen was called
         mock_urlopen.assert_called_once()
+
+    @mock.patch('urllib.request.urlopen')
+    def test_sends_email_for_each_recipient(self, mock_urlopen):
+        """Test that send_email iterates over all recipients."""
+        mock_response = mock.MagicMock()
+        mock_response.read.return_value = b'{"Messages": [{"Status": "success"}]}'
+        mock_response.__enter__ = mock.MagicMock(return_value=mock_response)
+        mock_response.__exit__ = mock.MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        send.send_email(
+            from_email='sender@example.com',
+            to_emails=['first@example.com', 'second@example.com'],
+            subject='Test',
+            body='Test body'
+        )
+
+        self.assertEqual(mock_urlopen.call_count, 2)
+
+    @mock.patch('urllib.request.urlopen')
+    def test_sends_email_for_comma_separated_string(self, mock_urlopen):
+        """Test that comma-separated string recipients are sent one-by-one."""
+        mock_response = mock.MagicMock()
+        mock_response.read.return_value = b'{"Messages": [{"Status": "success"}]}'
+        mock_response.__enter__ = mock.MagicMock(return_value=mock_response)
+        mock_response.__exit__ = mock.MagicMock(return_value=False)
+        mock_urlopen.return_value = mock_response
+
+        send.send_email(
+            from_email='sender@example.com',
+            to_emails='first@example.com, second@example.com',
+            subject='Test',
+            body='Test body'
+        )
+
+        self.assertEqual(mock_urlopen.call_count, 2)
 
 
 # Base URL for the echo server (set in TestSendEmailWithEchoServer.setUpClass)
@@ -377,7 +413,7 @@ class TestSendEmailWithEchoServer(unittest.TestCase):
         """send_email POSTs correct JSON to API_URL; echo server returns it."""
         send.send_email(
             from_email="sender@example.com",
-            to_email="recipient@example.com",
+            to_emails=["recipient@example.com"],
             subject="Test Subject",
             body="Test body content",
         )
@@ -403,7 +439,7 @@ class TestSendEmailWithEchoServer(unittest.TestCase):
         try:
             send.send_email(
                 from_email="a@example.com",
-                to_email="b@example.com",
+                to_emails=["b@example.com"],
                 subject="With attachment",
                 body="Body",
                 files=[path],
@@ -481,6 +517,28 @@ class TestMainIntegration(unittest.TestCase):
             with self.assertRaises(SystemExit) as cm:
                 send.main()
             self.assertEqual(cm.exception.code, 1)
+
+    @mock.patch('send.send_email')
+    def test_main_parses_comma_separated_recipients(self, mock_send_email):
+        """Test that main parses comma-separated recipients into a list."""
+        test_args = [
+            'send.py',
+            '--from', 'sender@example.com',
+            '--to', 'first@example.com, second@example.com',
+            '--subject', 'Test',
+            '--body', 'Body'
+        ]
+
+        with mock.patch.object(sys, 'argv', test_args):
+            send.main()
+
+        mock_send_email.assert_called_once_with(
+            'sender@example.com',
+            ['first@example.com', 'second@example.com'],
+            'Test',
+            'Body',
+            None
+        )
 
 
 if __name__ == '__main__':

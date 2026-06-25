@@ -13,6 +13,8 @@
   - `MAIL_SUBJECT` → `MJ_SUBJECT`
   - `MAIL_BODY` → `MJ_BODY`
   - `MAIL_FILES_N` → `MJ_FILES_N`
+- Mail send flow now normalizes comma-separated recipients and sends one request per address.
+- Claude plugin version bumped to `1.0.1`.
 
 ### Migration
 If you have an existing `.env` file, rename your variables from `MAIL_*` to `MJ_*`.

@@ -33,7 +33,7 @@ MJ_APIKEY_PRIVATE=your_private_key
 2. Optionally configure default values:
 ```bash
 MJ_FROM=sender@example.com
-MJ_TO=default-recipient@example.com
+MJ_TO=default-recipient@example.com,another-recipient@example.com
 MJ_SUBJECT=Default Subject
 MJ_BODY=Default message body
 # Attachments: MJ_FILES_1, MJ_FILES_2, ...
@@ -57,7 +57,7 @@ python3 scripts/send.py \
 | Argument    | Short | Description                                   | Required |
 | ----------- | ----- | --------------------------------------------- | -------- |
 | `--from`    | `-f`  | Sender email address                          | No\*     |
-| `--to`      | `-t`  | Recipient email address                       | No\*     |
+| `--to`      | `-t`  | Recipient email address(es), comma-separated  | No\*     |
 | `--subject` | `-s`  | Email subject                                 | No\*     |
 | `--body`    | `-b`  | Email body text                               | No\*     |
 | `--files`   |       | File paths to attach (space-separated)        | No       |
@@ -176,4 +176,3 @@ python3 scripts/send.py \
 
 1. **Protect API Keys:** Never commit or read directly `.env` files
 2. **Data Sensitivity:** Be mindful of sensitive information in attachments
-

@@ -11,7 +11,7 @@
       "name": "send-email-mailjet",
       "source": "./",
       "description": "Send emails with attachments via Mailjet API",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "author": {
         "name": "Ivan Shcherbak"
       },
