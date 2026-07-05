@@ -28,6 +28,18 @@ Add the marketplace and install the plugin:
 ```
 
 After installation, Claude will automatically detect when you want to send an email and use the skill. You can also invoke it directly with `/send-email-mailjet:send-email`.
+
+### Codex
+
+Add the marketplace and install the plugin:
+
+```shell
+codex plugin marketplace add funivan/send-email-mailjet-skill
+codex plugin add send-email-mailjet@send-email-mailjet-marketplace
+```
+
+After installation, Codex will detect requests to send emails or attachments and use the Mailjet skill automatically.
+
 ## Configuration
 
 Mailjet is a reliable email delivery service with a REST API. 
