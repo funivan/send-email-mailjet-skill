@@ -1,0 +1,20 @@
+{
+  "name": "send-email-mailjet-marketplace",
+  "interface": {
+    "displayName": "Send Email Mailjet"
+  },
+  "plugins": [
+    {
+      "name": "send-email-mailjet",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

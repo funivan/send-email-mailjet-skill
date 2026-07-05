@@ -1,0 +1,29 @@
+{
+  "name": "send-email-mailjet",
+  "version": "1.0.1",
+  "description": "Send emails with attachments via the Mailjet API.",
+  "author": {
+    "name": "Ivan Shcherbak",
+    "url": "https://github.com/funivan"
+  },
+  "homepage": "https://github.com/funivan/send-email-mailjet-skill",
+  "repository": "https://github.com/funivan/send-email-mailjet-skill",
+  "license": "MIT",
+  "keywords": ["email", "mailjet", "attachments"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Send Email Mailjet",
+    "shortDescription": "Send emails and attachments through Mailjet.",
+    "longDescription": "Use Mailjet credentials from the environment or a local .env file to send email messages with optional file attachments from Codex.",
+    "developerName": "Ivan Shcherbak",
+    "category": "Productivity",
+    "capabilities": ["Write", "Automation"],
+    "websiteURL": "https://github.com/funivan/send-email-mailjet-skill",
+    "defaultPrompt": [
+      "Send this file by email.",
+      "Email this report to my team.",
+      "Send a Mailjet email with attachments."
+    ],
+    "brandColor": "#0EA5E9"
+  }
+}

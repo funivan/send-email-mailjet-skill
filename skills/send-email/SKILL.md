@@ -17,10 +17,23 @@ Only include flags for values explicitly provided by the user. Omit flags that w
 
 ## Sending the email
 
-Run the following command with only the flags the user specified:
+Run the command for the current host with only the flags the user specified.
+
+For Claude Code plugins, use:
 
 ```bash
 python3 ${CLAUDE_PLUGIN_ROOT}/skill/send-email-mailjet/scripts/send.py \
+  --from "sender@example.com" \
+  --to "recipient@example.com" \
+  --subject "Subject line" \
+  --body "Email body text" \
+  --files path/to/file1.pdf path/to/file2.txt
+```
+
+For Codex plugins, use:
+
+```bash
+python3 <plugin root>/skill/send-email-mailjet/scripts/send.py \
   --from "sender@example.com" \
   --to "recipient@example.com" \
   --subject "Subject line" \
